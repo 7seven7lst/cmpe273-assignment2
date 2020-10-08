@@ -17,7 +17,10 @@ def eval_condition(response, is_error, condition, steps):
         ifblock = condition.get('if')
         left = ifblock['equal']['left']
         right = ifblock['equal']['right']
-        if right == response.status_code:
+        if left != 'http.response.code':
+            raise ValueError('Unrecognized left condition')
+        
+        if left == 'http.response.code' and right == response.status_code:
             thenblock = condition.get('then')
             perform_action(thenblock['action'], thenblock['data'], response, steps)
         else:
